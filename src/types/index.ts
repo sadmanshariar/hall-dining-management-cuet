@@ -5,6 +5,11 @@ export interface Student {
   password: string;
   hallId: string;
   registrationNumber: string;
+  studentId: string;
+  department: string;
+  roomNumber: string;
+  phoneNumber: string;
+  profilePhoto?: string;
   balance: number;
 }
 
@@ -14,6 +19,19 @@ export interface Manager {
   email: string;
   password: string;
   hallId: string;
+  studentId?: string; // Reference to student if manager is a student
+  assignedBy?: string; // Admin who assigned this role
+  assignedAt?: string;
+  diningMonthId?: string; // Which dining month they're managing
+}
+
+export interface Admin {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  hallId: string;
+  profilePhoto?: string;
 }
 
 export interface DiningMonth {
@@ -23,6 +41,7 @@ export interface DiningMonth {
   isActive: boolean;
   createdBy: string;
   createdAt: string;
+  managers: string[]; // Array of manager IDs assigned to this dining month
 }
 
 export interface Token {

@@ -6,7 +6,7 @@ const Login: React.FC = () => {
   const { state, dispatch } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState<'student' | 'manager'>('student');
+  const [userType, setUserType] = useState<'student' | 'manager' | 'admin'>('student');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,6 +21,13 @@ const Login: React.FC = () => {
         const student = state.students.find(s => s.email === email && s.password === password);
         if (student) {
           dispatch({ type: 'LOGIN_STUDENT', payload: student });
+        } else {
+          setError('Invalid email or password');
+        }
+      } else if (userType === 'admin') {
+        const admin = state.admins.find(a => a.email === email && a.password === password);
+        if (admin) {
+          dispatch({ type: 'LOGIN_ADMIN', payload: admin });
         } else {
           setError('Invalid email or password');
         }
@@ -57,30 +64,42 @@ const Login: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Login as
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setUserType('student')}
-                    className={`p-3 rounded-lg border-2 text-center transition-all duration-200 ${
+                    className={`p-2 rounded-lg border-2 text-center transition-all duration-200 ${
                       userType === 'student'
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-gray-200 hover:border-gray-300 text-gray-700'
                     }`}
                   >
-                    <User className="h-5 w-5 mx-auto mb-1" />
-                    <span className="text-sm font-medium">Student</span>
+                    <User className="h-4 w-4 mx-auto mb-1" />
+                    <span className="text-xs font-medium">Student</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setUserType('manager')}
-                    className={`p-3 rounded-lg border-2 text-center transition-all duration-200 ${
+                    className={`p-2 rounded-lg border-2 text-center transition-all duration-200 ${
                       userType === 'manager'
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-gray-200 hover:border-gray-300 text-gray-700'
                     }`}
                   >
-                    <Users className="h-5 w-5 mx-auto mb-1" />
-                    <span className="text-sm font-medium">Manager</span>
+                    <Users className="h-4 w-4 mx-auto mb-1" />
+                    <span className="text-xs font-medium">Manager</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUserType('admin')}
+                    className={`p-2 rounded-lg border-2 text-center transition-all duration-200 ${
+                      userType === 'admin'
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                    }`}
+                  >
+                    <User className="h-4 w-4 mx-auto mb-1" />
+                    <span className="text-xs font-medium">Admin</span>
                   </button>
                 </div>
               </div>
@@ -160,7 +179,10 @@ const Login: React.FC = () => {
                   <strong>Student:</strong> john.doe@university.edu / student123
                 </div>
                 <div className="bg-gray-50 p-2 rounded">
-                  <strong>Manager:</strong> manager@university.edu / manager123
+                  <strong>Manager:</strong> sarah.wilson@university.edu / student101
+                </div>
+                <div className="bg-gray-50 p-2 rounded">
+                  <strong>Admin:</strong> admin@university.edu / admin123
                 </div>
               </div>
             </div>

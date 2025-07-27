@@ -16,10 +16,19 @@ const Header: React.FC<HeaderProps> = ({ onViewChange, currentView }) => {
         { id: 'dashboard', label: 'Dashboard' },
         { id: 'dining-month', label: 'Dining Month' },
         { id: 'cancellation-approval', label: 'Cancellations' },
-        { id: 'students', label: 'Students' }
+        { id: 'students-database', label: 'Students' }
+      ]
+    : state.userRole === 'admin'
+    ? [
+        { id: 'dashboard', label: 'Dashboard' },
+        { id: 'students-database', label: 'Students Database' },
+        { id: 'manager-assignment', label: 'Assign Managers' },
+        { id: 'dining-month', label: 'Dining Month' },
+        { id: 'cancellation-approval', label: 'Cancellations' }
       ]
     : [
         { id: 'dashboard', label: 'Dashboard' },
+        { id: 'profile', label: 'Profile' },
         { id: 'purchase', label: 'Purchase Token' },
         { id: 'cancel', label: 'Cancel Meals' },
         { id: 'payment', label: 'Add Balance' },
@@ -30,7 +39,9 @@ const Header: React.FC<HeaderProps> = ({ onViewChange, currentView }) => {
     dispatch({ type: 'LOGOUT' });
   };
 
-  const currentUserName = state.userRole === 'manager' 
+  const currentUserName = state.userRole === 'admin'
+    ? state.currentAdmin?.name
+    : state.userRole === 'manager' 
     ? state.currentManager?.name 
     : state.currentUser?.name;
   return (

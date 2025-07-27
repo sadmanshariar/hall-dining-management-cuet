@@ -4,6 +4,9 @@ import { useApp } from './contexts/AppContext';
 import Login from './components/Login';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
+import StudentProfile from './components/StudentProfile';
+import StudentsDatabase from './components/StudentsDatabase';
+import ManagerAssignment from './components/ManagerAssignment';
 import TokenPurchase from './components/TokenPurchase';
 import MealCancellation from './components/MealCancellation';
 import PaymentGateway from './components/PaymentGateway';
@@ -23,6 +26,12 @@ const AppContent: React.FC = () => {
     switch (currentView) {
       case 'dashboard':
         return <Dashboard />;
+      case 'profile':
+        return <StudentProfile />;
+      case 'students-database':
+        return <StudentsDatabase />;
+      case 'manager-assignment':
+        return <ManagerAssignment />;
       case 'purchase':
         return <TokenPurchase />;
       case 'cancel':

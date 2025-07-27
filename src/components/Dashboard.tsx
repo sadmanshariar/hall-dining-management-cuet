@@ -19,6 +19,151 @@ const Dashboard: React.FC = () => {
     .reduce((sum, day) => sum + day.refundAmount, 0);
 
   const activeDiningMonth = state.diningMonths.find(dm => dm.isActive);
+  const currentManagers = activeDiningMonth ? 
+    state.managers.filter(m => m.diningMonthId === activeDiningMonth.id) : [];
+
+  if (state.userRole === 'admin') {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Students</p>
+                <p className="text-3xl font-bold text-gray-900">{state.students.length}</p>
+              </div>
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
+                <Users className="h-6 w-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Active Tokens</p>
+                <p className="text-3xl font-bold text-gray-900">{state.tokens.filter(t => t.isActive).length}</p>
+              </div>
+              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg">
+                <CreditCard className="h-6 w-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                <p className="text-3xl font-bold text-gray-900">৳{state.tokens.reduce((sum, t) => sum + t.totalCost, 0).toLocaleString()}</p>
+              </div>
+              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg">
+                <DollarSign className="h-6 w-6 text-purple-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Current Managers</p>
+                <p className="text-3xl font-bold text-gray-900">{currentManagers.length}</p>
+              </div>
+              <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg">
+                <Users className="h-6 w-6 text-orange-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Current Managers Display */}
+        {currentManagers.length > 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Current Dining Month Managers</h3>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {currentManagers.map((manager) => {
+                  const student = state.students.find(s => s.id === manager.studentId);
+                  return (
+                    <div key={manager.id} className="flex items-center space-x-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-200">
+                        {student?.profilePhoto ? (
+                          <img
+                            src={student.profilePhoto}
+                            alt={student.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <Users className="h-6 w-6 text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900">{manager.name}</h4>
+                        <p className="text-sm text-gray-600">{student?.studentId}</p>
+                        <p className="text-xs text-blue-600">Manager</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Token Purchases</h3>
+            <div className="space-y-3">
+              {state.tokens.slice(-5).map((token) => {
+                const student = state.students.find(s => s.id === token.studentId);
+                return (
+                  <div key={token.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <p className="font-medium text-gray-900">{student?.name}</p>
+                      <p className="text-sm text-gray-600">
+                        {token.duration} days • {token.mealType === 'lunch' ? 'Lunch Only' : 'Lunch + Dinner'}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-900">৳{token.totalCost}</p>
+                      <p className="text-sm text-gray-600">{formatDate(token.purchaseDate)}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">System Overview</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <span className="text-gray-700">Active Dining Month</span>
+                <span className="font-semibold text-blue-600">
+                  {activeDiningMonth ? 'Yes' : 'No'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <span className="text-gray-700">Total Balance</span>
+                <span className="font-semibold text-green-600">
+                  ৳{state.students.reduce((sum, s) => sum + s.balance, 0).toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                <span className="text-gray-700">Pending Cancellations</span>
+                <span className="font-semibold text-yellow-600">
+                  {state.cancelledDays.filter(c => c.status === 'pending').length}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (state.userRole === 'manager') {
     return (
@@ -158,6 +303,42 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Current Managers Display for Students */}
+      {currentManagers.length > 0 && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <Users className="h-5 w-5 mr-2 text-blue-600" />
+            Current Dining Month Managers
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {currentManagers.map((manager) => {
+              const student = state.students.find(s => s.id === manager.studentId);
+              return (
+                <div key={manager.id} className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-blue-200">
+                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-blue-200">
+                    {student?.profilePhoto ? (
+                      <img
+                        src={student.profilePhoto}
+                        alt={student.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <Users className="h-5 w-5 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900">{manager.name}</h4>
+                    <p className="text-sm text-blue-600">Manager</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between">
